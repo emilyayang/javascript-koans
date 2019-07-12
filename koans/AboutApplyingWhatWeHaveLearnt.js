@@ -35,7 +35,11 @@ describe("About Applying What We Have Learnt", function() {
 
   it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional)", function () {
       var productsICanEat = [];
-
+      productsICanEat= _(products).filter(function(pizza) {
+        return pizza.containsNuts === false && _(pizza.ingredients).all(function(ingredient) { 
+          return ingredient !== 'mushrooms'
+        })
+      })
       /* solve using filter() & all() / any() */
 
       expect(productsICanEat.length).toBe(1);
@@ -56,14 +60,14 @@ describe("About Applying What We Have Learnt", function() {
   });
 
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
-    var sum = _.range(0, 1000)_.reduce(function(memo, num) {
-      if (num % 3 === 0 || num % 5 === 0) {
-        return memo + num;
-      } else {
-        return memo;
+    var sum = _.reduce(_.range(1000), function(memo, x) {
+      if(x % 3 === 0 || x % 5 === 0) {
+        memo += x;
       }
-    }, 0);    /* try chaining range() and reduce() */
+      return memo;
+    }, 0);    
 
+/* try chaining range() and reduce() */
     expect(233168).toBe(sum);
   });
 
@@ -84,7 +88,17 @@ describe("About Applying What We Have Learnt", function() {
     var ingredientCount = { "{ingredient name}": 0 };
 
     /* chain() together map(), flatten() and reduce() */
-
+    var mushroomCount = _(_.map(products, function(object) {return object.ingredients})).chain()
+    .flatten()
+    .reduce(function(memo, ingredient) {
+      if (ingredient === 'mushrooms') {
+        if (!ingredientCount.mushrooms) {
+          ingredientCount.mushrooms = 1;
+        } else {
+          ingredientCount.mushrooms += 1;
+        }
+      }
+    });
     expect(ingredientCount['mushrooms']).toBe(2);
   });
 
